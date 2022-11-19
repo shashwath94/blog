@@ -1,0 +1,19 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Shashwath's Blog"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/shashwath94
+format:
+  html:
+    theme: darkly
+    css: styles.css
+    code-copy: true
+
+
+

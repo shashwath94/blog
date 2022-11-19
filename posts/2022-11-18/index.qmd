@@ -1,0 +1,128 @@
+---
+title: "How to setup Pytorch and Tensorflow with GPU support (CUDA) on WSL2?"
+author: "Shashwath Krishna"
+date: "2022-11-18"
+categories: [pytorch, tensorflow, wsl, cuda]
+---
+
+Alright, you have your Windows machine and you want to run Linux on it? Better yet, you want to run some Machine Learning/Deep Learning experiments whilst not having to do a dual boot or on a VirtualBox? This post will help you setup your linux environment for ML/DL wit h GPU support using the awesome Windows Subsystem for Linux (WSL).
+
+### Quick WSL overview
+The Windows Subsystem for Linux (WSL) is layer build on top of the Windows operating system where you can run linux programs/executables. Think of it as a virtualization technology that provides you with an isolated environment that runs linux within your windows ecosystem.
+
+### Steps
+
+1. [Install WSL](#1)
+2. [Install NVIDIA driver](#2)
+3. [Install Miniconda](#3)
+4. [Install Tensorflow](#4)
+    1. Create a virtual environment
+    2. Install CUDA and CUDNN
+    3. Export environment variables
+    4. Install Tensorflow
+
+5. [Install PyTorch](#5)
+    1. Create a virtual environment
+    2. Install PyTorch using conda
+
+### Install WSL<a name="1"></a>
+If you have a machine with Windows 10, you can install WSL using the [Windows insider program](https://learn.microsoft.com/en-us/shows/one-dev-minute/learn-how-to-install-wsl-2). Modern machines running Windows 11 can install using the following command 
+```
+wsl --install
+```
+This command will install Ubuntu as the default Linux distro, if you want to check all the other available distros, you can run
+```
+wsl --list --online
+```
+For example, if you wanted to install `kali-linux`, then you simply run
+```
+wsl --install -d kali-linux
+```
+If you want to check the version of the Linux kernel and other info, simply run
+```
+wsl --version
+```
+
+If you want to update the version of WSL to the latest available one, simply run
+```
+wsl --update
+```
+
+### Install the Nvidia driver<a name="2"></a>
+The next step is to install the NVIDIA driver. Now it is very important to note that you should NOT install the NVIDIA driver within your linux environment. The NVIDIA driver should only be installed on the Windows machine. You can find the driver that is compatible with your machine right [here](https://www.nvidia.com/download/index.aspx).
+
+Download the exe file and click on it and follow the instructions to complete the installation.
+
+### Install Miniconda<a name="3"></a>
+Now switch to your linux shell and install miniconda with the following commands. Miniconda is a lightweight Anaconda installer which is in turn a tool to build isolated python environments without messing with external installations of other software packages. It makes it very convenient to build virtual environments for your python projects without worrying about all the dependency issues.
+
+```
+curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o Miniconda3-latest-Linux-x86_64.sh
+
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+
+### Install Tensorflow<a name="4"></a>
+1. Create a virtual environment
+```
+conda create --name tf python=3.8
+```
+You can activate and deactivate the virtual environment using the following commands
+```
+conda deactivate
+conda activate tf
+```
+where `tf` is the name of the virtual environment you just created. The rest of the commands should be run after you activate the virtual environment.
+
+2. Install CUDA and CUDNN
+```
+conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
+```
+
+3. Export environment variables
+```
+mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/' > $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+```
+
+4. Install Tensorflow
+Once you exported the environment variables, you need to restart your terminal. Re activate the environment and install the tensorflow using pip below
+```
+pip install tensorflow
+```
+
+5. Test the installation
+You can test if the installation ran successfully by running the following snippet of code in a python shell within your environment
+```
+import tensorflow as tf
+
+if tf.test.is_gpu_available() == True:
+    print("Tensorflow succesfully detected the GPU")
+else:
+    print("Tensoflow did not detect the GPU")
+```
+
+### Install PyTorch<a name="5"></a>
+1. Create a virtual environment
+```
+conda create --name pytorch python=3.8
+```
+
+2. Install Pytorch
+```
+conda activate pytorch
+conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+```
+
+3. Test the installation
+```
+import torch
+
+if torch.cuda.is_available() == True:
+    print("PyTorch successfully detected the GPU")
+else:
+    print("PyTorch did not detect the GPU")
+```
+
+That concludes this walkthrough, now you hopefully have Tensorflow/PyTorch successfully installed with GPU support. Happy Deep Learning :)

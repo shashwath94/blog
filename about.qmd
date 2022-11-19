@@ -1,0 +1,17 @@
+---
+title: "About myself"
+image: dp.jpg
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/shashwath94/
+    - icon: github
+      text: Github
+      href: https://github.com/shashwath94
+
+---
+Hey everyone, welcome to my blog :)
+I'm Shashwath and I'm a Machine Learning Engineer. I love all things ML/Deep Learning/Natural language processing/Computer Vision. This will be a space where I explore different concepts/ random musings and learn new stuff along the way (together) hopefully!
+
